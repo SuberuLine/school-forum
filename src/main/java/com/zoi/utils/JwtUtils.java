@@ -70,7 +70,7 @@ public class JwtUtils {
      * @return Redis中是否有该Token
      */
     private boolean isInvalidToken(String uuid) {
-        return template.hasKey(Const.JWT_BLACK_LIST + uuid);
+        return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST + uuid));
     }
 
     /**
@@ -84,22 +84,27 @@ public class JwtUtils {
         Algorithm algorithm = Algorithm.HMAC256(key);
         Date expire = this.expireTime();
         return JWT.create()
-                .withJWTId(UUID.randomUUID().toString())
-                .withClaim("id", id)
+                .withJWTId(UUID.randomUUID().toString()) // 设置JWT的UUID
+                .withClaim("id", id)    //配置JWT自定义信息
                 .withClaim("name", username)
                 .withClaim("authorities", details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
-                .withExpiresAt(expire)
-                .withIssuedAt(new Date())
-                .sign(algorithm);
+                .withExpiresAt(expire)  // 设置过期时间
+                .withIssuedAt(new Date()) // 设置创建创建时间
+                .sign(algorithm); // 最终签名
     }
 
+    /**
+     * 根据Jwt验证并解析用户信息
+     * @param headerToken
+     * @return 如果是过期令牌则返回null 否则返回解密后信息
+     */
     public DecodedJWT resolveJwt(String headerToken) {
         String token = this.convertToken(headerToken);
         if (token == null) return null;
         Algorithm algorithm = Algorithm.HMAC256(key);
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
         try {
-            DecodedJWT verify = jwtVerifier.verify(token);
+            DecodedJWT verify = jwtVerifier.verify(token); // 对JWT令牌进行验证，看看是否被修改
             if (this.isInvalidToken(verify.getId())) return null;
             Date expiresAt = verify.getExpiresAt();
             return new Date().after(expiresAt) ? null : verify;
