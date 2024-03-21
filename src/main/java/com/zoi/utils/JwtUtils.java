@@ -45,6 +45,7 @@ public class JwtUtils {
         try {
             DecodedJWT jwt = jwtVerifier.verify(token);
             String id = jwt.getId();
+            // 取出UUID调用方法将其注册至黑名单中
             return deleteToken(id, jwt.getExpiresAt());
         } catch (JWTVerificationException e) {
             return false;
@@ -84,7 +85,7 @@ public class JwtUtils {
         Algorithm algorithm = Algorithm.HMAC256(key);
         Date expire = this.expireTime();
         return JWT.create()
-                .withJWTId(UUID.randomUUID().toString()) // 设置JWT的UUID
+                .withJWTId(UUID.randomUUID().toString()) // 添加一个UUID用于记录黑名单，将其作为JWT的ID属性
                 .withClaim("id", id)    //配置JWT自定义信息
                 .withClaim("name", username)
                 .withClaim("authorities", details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())

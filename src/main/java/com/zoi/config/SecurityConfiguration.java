@@ -1,8 +1,10 @@
 package com.zoi.config;
 
 import com.zoi.entity.RestBean;
+import com.zoi.entity.dto.Account;
 import com.zoi.entity.vo.response.AuthorizeVO;
 import com.zoi.filter.JwtAuthorizeFilter;
+import com.zoi.service.AccountService;
 import com.zoi.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +32,9 @@ public class SecurityConfiguration {
 
     @Resource
     JwtAuthorizeFilter jwtAuthorizeFilter;
+
+    @Resource
+    AccountService accountService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -78,12 +83,12 @@ public class SecurityConfiguration {
                                         Authentication authentication) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         User user = (User) authentication.getPrincipal();
-        String token = jwtUtils.createJwt(user, 1, "sb");
-        AuthorizeVO vo = new AuthorizeVO();
-        vo.setExpire(jwtUtils.expireTime());
-        vo.setRole("");
-        vo.setToken(token);
-        vo.setUsername("sb");
+        Account account = accountService.findAccountByNameOrEmail(user.getUsername());
+        String token = jwtUtils.createJwt(user, account.getId(), account.getUsername());
+        AuthorizeVO vo = account.asViewObject(AuthorizeVO.class, v -> {
+            v.setExpire(jwtUtils.expireTime());
+            v.setToken(token);
+        });
         response.getWriter().write(RestBean.success(vo).asJsonString());
     }
 
@@ -100,6 +105,7 @@ public class SecurityConfiguration {
         response.setContentType("application/json;charset=utf-8");
         PrintWriter writer = response.getWriter();
         String authorization = httpServletRequest.getHeader("Authorization");
+        // 登出时将token添加到黑名单防止滥用
         if (jwtUtils.invalidateJwt(authorization)) {
             writer.write(RestBean.success().asJsonString());
         } else {
