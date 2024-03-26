@@ -12,4 +12,11 @@ public class Const {
 
     // 跨域等级，需小于-100（Security默认跨域等级为-100）
     public static final int ORDER_CORS = -103;
+
+    // 限流等级
+    public static final int ORDER_LIMIT = -101;
+    // Redis中记录ip访问次数
+    public static final String FLOW_LIMIT_COUNTER = "flow:counter:";
+    // Redis中记录封禁ip
+    public static final String FLOW_LIMIT_BLOCK = "flow:block:";
 }
