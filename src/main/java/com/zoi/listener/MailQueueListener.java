@@ -30,7 +30,7 @@ public class MailQueueListener {
                 createMessage("欢迎注册我们的网站",
                         "您的邮件注册验证码为：" + code + "，有效期为3分钟，请勿泄露", email);
             case "reset" ->
-                createMessage("你的密码重复邮件",
+                createMessage("您的密码重置邮件",
                         "您正在进行重置密码操作，验证码为：" + code + "，如非本人操作请及时修改密码", email);
             default -> null;
         };

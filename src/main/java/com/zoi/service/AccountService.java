@@ -2,7 +2,9 @@ package com.zoi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zoi.entity.dto.Account;
+import com.zoi.entity.vo.request.ConfirmResetVO;
 import com.zoi.entity.vo.request.EmailRegisterVO;
+import com.zoi.entity.vo.request.EmailResetVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AccountService extends IService<Account>, UserDetailsService {
@@ -29,5 +31,19 @@ public interface AccountService extends IService<Account>, UserDetailsService {
      * @return
      */
     String registerEmailAccount(EmailRegisterVO vo);
+
+    /**
+     * 用户请求重置验证码
+     * @param vo 用户重置密码信息实体
+     * @return
+     */
+    String resetConfirm(ConfirmResetVO vo);
+
+    /**
+     * 用户确认重置密码
+     * @param vo 用户确认重置密码实体
+     * @return
+     */
+    String resetEmailAccountPassword(EmailResetVO vo);
 
 }
