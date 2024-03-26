@@ -2,6 +2,7 @@ package com.zoi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zoi.entity.dto.Account;
+import com.zoi.entity.vo.request.EmailRegisterVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AccountService extends IService<Account>, UserDetailsService {
@@ -21,5 +22,12 @@ public interface AccountService extends IService<Account>, UserDetailsService {
      * @return
      */
     String registerEmailVerifyCode(String type, String email, String ip);
+
+    /**
+     * 注册账号
+     * @param vo 注册信息实体类
+     * @return
+     */
+    String registerEmailAccount(EmailRegisterVO vo);
 
 }

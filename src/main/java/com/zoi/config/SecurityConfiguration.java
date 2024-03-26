@@ -40,7 +40,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .authorizeHttpRequests(conf -> conf
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf -> conf
@@ -85,6 +85,7 @@ public class SecurityConfiguration {
         User user = (User) authentication.getPrincipal();
         Account account = accountService.findAccountByNameOrEmail(user.getUsername());
         String token = jwtUtils.createJwt(user, account.getId(), account.getUsername());
+        // 复制Account类中的字段内容给AuthorizeVO
         AuthorizeVO vo = account.asViewObject(AuthorizeVO.class, v -> {
             v.setExpire(jwtUtils.expireTime());
             v.setToken(token);

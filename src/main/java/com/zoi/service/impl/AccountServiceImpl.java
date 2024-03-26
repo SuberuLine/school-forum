@@ -1,7 +1,9 @@
 package com.zoi.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoi.entity.dto.Account;
+import com.zoi.entity.vo.request.EmailRegisterVO;
 import com.zoi.mapper.AccountMapper;
 import com.zoi.service.AccountService;
 import com.zoi.utils.Const;
@@ -13,8 +15,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +34,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Resource
     FlowLimitUtils flowLimitUtils;
+
+    @Resource
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -51,6 +58,13 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 .one();
     }
 
+    /**
+     * 生成验证码的业务逻辑
+     * @param type 发送邮件的类型
+     * @param email 邮箱地址
+     * @param ip 申请验证码的ip，用于限流
+     * @return 成功不返回信息
+     */
     @Override
     public String registerEmailVerifyCode(String type, String email, String ip) {
         // 加锁，防止同一请求多次调用
@@ -65,6 +79,49 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                     .set(Const.VERIFY_EMAIL_DATA + email, String.valueOf(code), 3, TimeUnit.MINUTES);
             return null;
         }
+    }
+
+    /**
+     * 注册业务逻辑
+     * @param vo 注册信息实体类
+     * @return 成功无返回
+     */
+    @Override
+    public String registerEmailAccount(EmailRegisterVO vo) {
+        String email = vo.getEmail();
+        String username = vo.getUsername();
+        String key = Const.VERIFY_EMAIL_DATA + email;
+        String code = stringRedisTemplate.opsForValue().get(key);
+        if (code == null) return "请先获取验证码";
+        if (!code.equals(vo.getCode())) return "验证码输入错误，请重试";
+        if (this.existAccountByEmail(email)) return "此电子邮件已被其他用户注册";
+        if (this.existAccountByUsername(username)) return "此用户名已被占用";
+        String password = passwordEncoder.encode(vo.getPassword());
+        Account account = new Account(null, username, password, email, "user", new Date());
+        if (this.save(account)) {
+            stringRedisTemplate.delete(key);
+            return null;
+        } else {
+            return "内部错误，请联系管理员";
+        }
+    }
+
+    /**
+     * 通过邮箱判断用户是否存在
+     * @param email 查询邮箱
+     * @return 是否存在该用户
+     */
+    private boolean existAccountByEmail(String email) {
+        return this.baseMapper.exists(Wrappers.<Account>query().eq("email", email));
+    }
+
+    /**
+     * 通过用户名判断用户是否存在
+     * @param username 用户名
+     * @return 是否存在用户
+     */
+    private boolean existAccountByUsername(String username) {
+        return this.baseMapper.exists(Wrappers.<Account>query().eq("username", username));
     }
 
     /**
