@@ -49,7 +49,7 @@ public class FlowLimitFilter extends HttpFilter {
         if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(Const.FLOW_LIMIT_COUNTER + ip))) {
             long increment = Optional.ofNullable(stringRedisTemplate.opsForValue().increment(Const.VERIFY_EMAIL_LIMIT + ip)).orElse(0L);
             if (increment > 10) {
-                stringRedisTemplate.opsForValue().set(Const.FLOW_LIMIT_BLOCK + ip, "", 30, TimeUnit.SECONDS);
+                stringRedisTemplate.opsForValue().set(Const.FLOW_LIMIT_BLOCK + ip, "", 50, TimeUnit.SECONDS);
                 return false;
             }
         } else {

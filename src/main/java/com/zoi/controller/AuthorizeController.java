@@ -5,6 +5,8 @@ import com.zoi.entity.vo.request.ConfirmResetVO;
 import com.zoi.entity.vo.request.EmailRegisterVO;
 import com.zoi.entity.vo.request.EmailResetVO;
 import com.zoi.service.AccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,12 +21,14 @@ import java.util.function.Supplier;
 @Validated
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "登录校验相关", description = "包括用户登录、注册、验证码请求等操作。")
 public class AuthorizeController {
 
     @Resource
     AccountService service;
 
     @GetMapping("/request-code")
+    @Operation(summary = "请求邮件验证码")
     public RestBean<Void> requestVerifyCode(@RequestParam @Email String email,
                                             @RequestParam @Pattern(regexp = "register|reset") String type,
                                             HttpServletRequest request){
@@ -32,6 +36,7 @@ public class AuthorizeController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "用户注册操作")
     public RestBean<Void> register(@RequestBody @Valid EmailRegisterVO vo) {
         return this.messageHandle(vo, service::registerEmailAccount);
     }
@@ -42,6 +47,7 @@ public class AuthorizeController {
     }
 
     @PostMapping("/reset-password")
+    @Operation(summary = "密码重置操作")
     public RestBean<Void> resetConfirm(@RequestBody @Valid EmailResetVO vo) {
         return this.messageHandle(vo, service::resetEmailAccountPassword);
     }
