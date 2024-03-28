@@ -46,4 +46,6 @@ public interface AccountService extends IService<Account>, UserDetailsService {
      */
     String resetEmailAccountPassword(EmailResetVO vo);
 
+    Account findAccountById(int id);
+
 }

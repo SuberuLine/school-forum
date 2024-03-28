@@ -1,6 +1,7 @@
 package com.zoi.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.zoi.utils.Const;
 import com.zoi.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
@@ -42,7 +43,7 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             // 然后直接把配置好的Authentication塞给SecurityContext表示已经完成验证
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            request.setAttribute("id", jwtUtils.toId(jwt));
+            request.setAttribute(Const.ATTR_USER_ID, jwtUtils.toId(jwt));
         }
         // 最后放行，继续下一个过滤器
         filterChain.doFilter(request, response);

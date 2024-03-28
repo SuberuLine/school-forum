@@ -76,7 +76,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             Random random = new Random();
             int code = random.nextInt(899999) + 100000;
             Map<String, Object> data = Map.of("type", type, "email", email, "code", code);
-            amqpTemplate.convertAndSend("mail", data);
+            amqpTemplate.convertAndSend(Const.MQ_MAIL, data);
             stringRedisTemplate.opsForValue()
                     .set(Const.VERIFY_EMAIL_DATA + email, String.valueOf(code), 3, TimeUnit.MINUTES);
             return null;
@@ -99,7 +99,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (this.existAccountByEmail(email)) return "此电子邮件已被其他用户注册";
         if (this.existAccountByUsername(username)) return "此用户名已被占用";
         String password = passwordEncoder.encode(vo.getPassword());
-        Account account = new Account(null, username, password, email, "user", new Date());
+        Account account = new Account(null, username, password, email, Const.ROLE_DEFAULT, new Date());
         if (this.save(account)) {
             stringRedisTemplate.delete(key);
             return null;
@@ -156,5 +156,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     private boolean verifyLimit(String ip) {
         String key = Const.VERIFY_EMAIL_LIMIT + ip;
         return flowLimitUtils.limitOnceCheck(key, 60);
+    }
+
+    @Override
+    public Account findAccountById(int id) {
+        return this.query().eq("id", id).one();
     }
 }
