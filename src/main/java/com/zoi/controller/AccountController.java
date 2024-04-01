@@ -4,6 +4,7 @@ import com.zoi.entity.RestBean;
 import com.zoi.entity.dto.Account;
 import com.zoi.entity.dto.AccountDetails;
 import com.zoi.entity.vo.request.DetailsSaveVO;
+import com.zoi.entity.vo.request.ModifyEmailVO;
 import com.zoi.entity.vo.response.AccountDetailsVO;
 import com.zoi.entity.vo.response.AccountVO;
 import com.zoi.service.AccountDetailService;
@@ -44,6 +45,13 @@ public class AccountController {
                                       @RequestBody @Valid DetailsSaveVO vo) {
         boolean success = detailService.saveAccountDetails(id, vo);
         return success ? RestBean.success() : RestBean.failure(400, "此用户名被占用");
+    }
+
+    @PostMapping("/modify-email")
+    public RestBean<Void> modifyEmail(@RequestAttribute(Const.ATTR_USER_ID) int id,
+                                      @RequestBody @Valid ModifyEmailVO vo) {
+        String result = accountService.modifyEmail(id, vo);
+        return result == null ? RestBean.success() : RestBean.failure(400, result);
     }
 
 }

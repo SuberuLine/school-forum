@@ -32,6 +32,9 @@ public class MailQueueListener {
             case "reset" ->
                 createMessage("您的密码重置邮件",
                         "您正在进行重置密码操作，验证码为：" + code + "，如非本人操作请及时修改密码", email);
+            case "modify" ->
+                createMessage("正在修改电子邮箱绑定",
+                        "您正在绑定新的电子邮件，验证码：" + code + "，如非本人操作请及时修改密码", email);
             default -> null;
         };
         if (message == null) return;
