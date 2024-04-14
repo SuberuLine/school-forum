@@ -3,8 +3,8 @@ package com.zoi.controller;
 import com.zoi.entity.RestBean;
 import com.zoi.entity.dto.Account;
 import com.zoi.entity.dto.AccountDetails;
+import com.zoi.entity.vo.request.ChangePasswordVO;
 import com.zoi.entity.vo.request.DetailsSaveVO;
-import com.zoi.entity.vo.request.ModifyEmailVO;
 import com.zoi.entity.vo.response.AccountDetailsVO;
 import com.zoi.entity.vo.response.AccountVO;
 import com.zoi.service.AccountDetailService;
@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/user")
@@ -47,6 +48,16 @@ public class AccountController {
         return success ? RestBean.success() : RestBean.failure(400, "此用户名被占用");
     }
 
+    @PostMapping("/change-password")
+    public RestBean<Void> changePassword(@RequestAttribute(Const.ATTR_USER_ID) int id,
+                                         @RequestBody @Valid ChangePasswordVO vo) {
+        return this.messageHandle(() -> accountService.changePassword(id, vo));
+    }
+
+    private RestBean<Void> messageHandle(Supplier<String> action) {
+        String message = action.get();
+        return message == null ? RestBean.success() : RestBean.failure(400, message);
+    }
     @PostMapping("/modify-email")
     public RestBean<Void> modifyEmail(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid ModifyEmailVO vo) {
