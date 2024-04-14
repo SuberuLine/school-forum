@@ -2,6 +2,7 @@ package com.zoi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zoi.entity.dto.Account;
+import com.zoi.entity.vo.request.ChangePasswordVO;
 import com.zoi.entity.vo.request.ConfirmResetVO;
 import com.zoi.entity.vo.request.EmailRegisterVO;
 import com.zoi.entity.vo.request.EmailResetVO;
@@ -50,5 +51,7 @@ public interface AccountService extends IService<Account>, UserDetailsService {
     Account findAccountById(int id);
 
     String modifyEmail(int id, ModifyEmailVO vo);
+
+    String changePassword(int id, ChangePasswordVO vo);
 
 }
