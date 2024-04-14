@@ -5,6 +5,7 @@ import com.zoi.entity.dto.Account;
 import com.zoi.entity.dto.AccountDetails;
 import com.zoi.entity.vo.request.ChangePasswordVO;
 import com.zoi.entity.vo.request.DetailsSaveVO;
+import com.zoi.entity.vo.request.ModifyEmailVO;
 import com.zoi.entity.vo.response.AccountDetailsVO;
 import com.zoi.entity.vo.response.AccountVO;
 import com.zoi.service.AccountDetailService;
