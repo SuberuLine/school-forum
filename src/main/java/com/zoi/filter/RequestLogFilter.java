@@ -29,7 +29,8 @@ public class RequestLogFilter extends OncePerRequestFilter {
     @Resource
     SnowflakeIdGenerator generator;
 
-    private final Set<String> ignores = Set.of("/swagger-ui", "/v3/api-docs");
+    // 不打印日志的api集合
+    private final Set<String> ignores = Set.of("/swagger-ui", "/v3/api-docs", "/image");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

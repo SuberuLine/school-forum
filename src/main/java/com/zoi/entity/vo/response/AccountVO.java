@@ -13,6 +13,8 @@ public class AccountVO {
 
     String role;
 
+    String avatar;
+
     Date registerTime;
 
 }
