@@ -6,9 +6,12 @@ import com.zoi.entity.dto.AccountDetails;
 import com.zoi.entity.vo.request.ChangePasswordVO;
 import com.zoi.entity.vo.request.DetailsSaveVO;
 import com.zoi.entity.vo.request.ModifyEmailVO;
+import com.zoi.entity.vo.request.PrivacyVO;
 import com.zoi.entity.vo.response.AccountDetailsVO;
+import com.zoi.entity.vo.response.AccountPrivacyVO;
 import com.zoi.entity.vo.response.AccountVO;
 import com.zoi.service.AccountDetailService;
+import com.zoi.service.AccountPrivacyService;
 import com.zoi.service.AccountService;
 import com.zoi.utils.Const;
 import jakarta.annotation.Resource;
@@ -27,6 +30,9 @@ public class AccountController {
 
     @Resource
     AccountDetailService detailService;
+
+    @Resource
+    AccountPrivacyService privacyService;
 
     @GetMapping("/info")
     public RestBean<AccountVO> info(@RequestAttribute(Const.ATTR_USER_ID) int id) {
@@ -66,4 +72,15 @@ public class AccountController {
         return result == null ? RestBean.success() : RestBean.failure(400, result);
     }
 
+    @PostMapping("/save-privacy")
+    public RestBean<Void> savePrivacy(@RequestAttribute(Const.ATTR_USER_ID) int id,
+                                      @RequestBody @Valid PrivacyVO vo){
+        privacyService.savePrivacy(id, vo);
+        return RestBean.success();
+    }
+
+    @GetMapping("/privacy")
+    public RestBean<AccountPrivacyVO> privacy(@RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return RestBean.success(privacyService.accountPrivacy(id).asViewObject(AccountPrivacyVO.class));
+    }
 }
