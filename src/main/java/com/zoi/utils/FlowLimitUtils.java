@@ -1,5 +1,6 @@
 package com.zoi.utils;
 
+import com.zoi.filter.FlowLimitFilter;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ public class FlowLimitUtils {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
+    private static final LimitAction defaultAction = overclock -> !overclock;
 
     /**
      * 判断用户是否在申请验证码冷却期中
@@ -87,6 +90,17 @@ public class FlowLimitUtils {
             stringRedisTemplate.opsForValue().set(key, "1", period, TimeUnit.SECONDS);
             return true;
         }
+    }
+
+    /**
+     * 针对在于时间段内的多次请求进行限制
+     * @param counterKey 计数键
+     * @param frequency 请求频率
+     * @param period 计数周期
+     * @return 是否通过限流检查
+     */
+    public boolean limitPeriodCounterCheck(String counterKey, int frequency, int period) {
+        return this.internalCheck(counterKey, frequency, period, defaultAction);
     }
 
     /**
