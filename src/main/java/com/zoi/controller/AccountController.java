@@ -14,12 +14,12 @@ import com.zoi.service.AccountDetailService;
 import com.zoi.service.AccountPrivacyService;
 import com.zoi.service.AccountService;
 import com.zoi.utils.Const;
+import com.zoi.utils.ControllerUtils;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,6 +33,9 @@ public class AccountController {
 
     @Resource
     AccountPrivacyService privacyService;
+
+    @Resource
+    ControllerUtils controllerUtils;
 
     @GetMapping("/info")
     public RestBean<AccountVO> info(@RequestAttribute(Const.ATTR_USER_ID) int id) {
@@ -58,18 +61,13 @@ public class AccountController {
     @PostMapping("/change-password")
     public RestBean<Void> changePassword(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                          @RequestBody @Valid ChangePasswordVO vo) {
-        return this.messageHandle(() -> accountService.changePassword(id, vo));
+        return controllerUtils.messageHandle(() -> accountService.changePassword(id, vo));
     }
 
-    private RestBean<Void> messageHandle(Supplier<String> action) {
-        String message = action.get();
-        return message == null ? RestBean.success() : RestBean.failure(400, message);
-    }
     @PostMapping("/modify-email")
     public RestBean<Void> modifyEmail(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid ModifyEmailVO vo) {
-        String result = accountService.modifyEmail(id, vo);
-        return result == null ? RestBean.success() : RestBean.failure(400, result);
+        return controllerUtils.messageHandle(() -> accountService.modifyEmail(id, vo));
     }
 
     @PostMapping("/save-privacy")

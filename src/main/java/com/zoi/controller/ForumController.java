@@ -1,14 +1,16 @@
 package com.zoi.controller;
 
 import com.zoi.entity.RestBean;
+import com.zoi.entity.vo.request.TopicCreateVO;
 import com.zoi.entity.vo.response.TopicTypeVO;
 import com.zoi.entity.vo.response.WeatherVO;
 import com.zoi.service.TopicService;
 import com.zoi.service.WeatherService;
+import com.zoi.utils.Const;
+import com.zoi.utils.ControllerUtils;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class ForumController {
 
     @Resource
     TopicService topicService;
+
+    @Resource
+    ControllerUtils controllerUtils;
 
     @GetMapping("/weather")
     public RestBean<WeatherVO> weather(double longitude, double latitude) {
@@ -37,4 +42,11 @@ public class ForumController {
                 .map(type -> type.asViewObject(TopicTypeVO.class))
                 .toList());
     }
+
+    @PostMapping("/create-topic")
+    public RestBean<Void> createTopic(@Valid @RequestBody TopicCreateVO vo,
+                                      @RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return controllerUtils.messageHandle(() -> topicService.createTopic(id, vo));
+    }
+
 }
