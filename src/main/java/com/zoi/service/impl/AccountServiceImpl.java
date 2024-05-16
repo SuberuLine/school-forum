@@ -3,8 +3,12 @@ package com.zoi.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoi.entity.dto.Account;
+import com.zoi.entity.dto.AccountDetails;
+import com.zoi.entity.dto.AccountPrivacy;
 import com.zoi.entity.vo.request.*;
+import com.zoi.mapper.AccountDetailsMapper;
 import com.zoi.mapper.AccountMapper;
+import com.zoi.mapper.AccountPrivacyMapper;
 import com.zoi.service.AccountService;
 import com.zoi.utils.Const;
 import com.zoi.utils.FlowLimitUtils;
@@ -37,6 +41,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Resource
     PasswordEncoder passwordEncoder;
+
+    @Resource
+    AccountPrivacyMapper accountPrivacyMapper;
+
+    @Resource
+    AccountDetailsMapper accountDetailsMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -99,6 +109,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         Account account = new Account(null, username, password, email, Const.ROLE_DEFAULT,null, new Date());
         if (this.save(account)) {
             this.deleteEmailVerifyCode(email);
+            accountPrivacyMapper.insert(new AccountPrivacy(account.getId()));
+            AccountDetails details = new AccountDetails();
+            details.setId(account.getId());
+            accountDetailsMapper.insert(details);
             return null;
         } else {
             return "内部错误，请联系管理员";
