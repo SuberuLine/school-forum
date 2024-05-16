@@ -7,6 +7,8 @@ import java.util.Date;
 @Data
 public class AccountVO {
 
+    int id;
+
     String username;
 
     String email;

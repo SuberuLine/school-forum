@@ -1,9 +1,10 @@
 package com.zoi.controller;
 
-import com.rabbitmq.client.Return;
 import com.zoi.entity.RestBean;
 import com.zoi.entity.dto.Interact;
+import com.zoi.entity.vo.request.AddCommentVO;
 import com.zoi.entity.vo.request.TopicCreateVO;
+import com.zoi.entity.vo.request.TopicUpdateVO;
 import com.zoi.entity.vo.response.*;
 import com.zoi.service.TopicService;
 import com.zoi.service.WeatherService;
@@ -67,7 +68,7 @@ public class ForumController {
     @GetMapping("/topic")
     public RestBean<TopicDetailVO> topic(@RequestParam @Min(0) int tid,
                                          @RequestAttribute(Const.ATTR_USER_ID) int id) {
-        return RestBean.success(topicService.getTopic(tid));
+        return RestBean.success(topicService.getTopic(tid, id));
     }
 
     @GetMapping("/interact")
@@ -84,4 +85,28 @@ public class ForumController {
         return RestBean.success(topicService.listTopicCollects(id));
     }
 
+    @PostMapping("/update-topic")
+    public RestBean<Void> updateTopic(@RequestBody TopicUpdateVO vo,
+                                      @RequestAttribute(Const.ATTR_USER_ID) int id) {
+        return controllerUtils.messageHandle(() -> topicService.updateTopic(id, vo));
+    }
+
+    @PostMapping("/add-comment")
+    public RestBean<Void> addComment(@Valid @RequestBody AddCommentVO vo,
+                                     @RequestAttribute(Const.ATTR_USER_ID) int id){
+        return controllerUtils.messageHandle(() -> topicService.createComment(id, vo));
+    }
+
+    @GetMapping("/comments")
+    public RestBean<List<CommentVO>> comments(@RequestParam @Min(0) int tid,
+                                              @RequestParam @Min(0) int page){
+        return RestBean.success(topicService.comments(tid, page + 1));
+    }
+
+    @GetMapping("/delete-comment")
+    public RestBean<Void> deleteComment(@RequestParam @Min(0) int id,
+                                        @RequestAttribute(Const.ATTR_USER_ID) int uid){
+        topicService.deleteComment(id, uid);
+        return RestBean.success();
+    }
 }
