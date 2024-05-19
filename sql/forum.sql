@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 17/05/2024 18:00:28
+ Date: 19/05/2024 23:59:45
 */
 
 SET NAMES utf8mb4;
@@ -29,14 +29,16 @@ CREATE TABLE `db_account`  (
   `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `register_time` datetime NULL DEFAULT NULL,
+  `github_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of db_account
 -- ----------------------------
-INSERT INTO `db_account` VALUES (1, 'test', '$2a$10$kKjgwT1WOrQlmeQHlO7il.oVEiN8lh0OcEvVsRgrLseC3ITGBDyGa', 'yuzoii@qq.com', 'user', '/avatar/1f3ad6ed59bf4bb798e93793c063d818', '2023-08-27 00:18:20');
-INSERT INTO `db_account` VALUES (3, 'testnew', '$2a$10$xpvoyySeiyZCofnXtH7V3ebs4.v2S8MlS6b4Vnv6qaq/S2/OtY9Xy', 'toxicokita@outlook.com', 'user', NULL, '2024-05-16 11:16:22');
+INSERT INTO `db_account` VALUES (1, 'test', '$2a$10$kKjgwT1WOrQlmeQHlO7il.oVEiN8lh0OcEvVsRgrLseC3ITGBDyGa', 'yuzoii@qq.com', 'user', '/avatar/396a4492d6d746369dcad0a1f1bc4fbb', '2023-08-27 00:18:20', NULL);
+INSERT INTO `db_account` VALUES (3, 'testnew', '$2a$10$xpvoyySeiyZCofnXtH7V3ebs4.v2S8MlS6b4Vnv6qaq/S2/OtY9Xy', 'toxicokita@outlook.com', 'user', NULL, '2024-05-16 11:16:22', NULL);
+INSERT INTO `db_account` VALUES (7, 'SuberuLineQAQ', '$2a$10$191/Q2XFqSBd.fC9PSX6seONawdUMV7TGeumC79KUk9ZthDAkiR0i', NULL, 'user', 'https://avatars.githubusercontent.com/u/41012826?v=4', '2024-05-18 22:02:55', 41012826);
 
 -- ----------------------------
 -- Table structure for db_account_details
@@ -57,6 +59,11 @@ CREATE TABLE `db_account_details`  (
 -- ----------------------------
 INSERT INTO `db_account_details` VALUES (1, 0, '15123421421', '2132132132', 'asdasdq', 'asdc');
 INSERT INTO `db_account_details` VALUES (3, 1, '15123512312', '1234451233', 'acgdsg', 'aas');
+INSERT INTO `db_account_details` VALUES (4, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `db_account_details` VALUES (5, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `db_account_details` VALUES (6, 1, NULL, NULL, NULL, NULL);
+INSERT INTO `db_account_details` VALUES (7, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `db_account_details` VALUES (8, 0, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for db_account_privacy
@@ -77,6 +84,11 @@ CREATE TABLE `db_account_privacy`  (
 -- ----------------------------
 INSERT INTO `db_account_privacy` VALUES (1, 1, 1, 1, 1, 1);
 INSERT INTO `db_account_privacy` VALUES (3, 1, 1, 1, 1, 1);
+INSERT INTO `db_account_privacy` VALUES (4, 1, 1, 1, 1, 1);
+INSERT INTO `db_account_privacy` VALUES (5, 1, 1, 1, 1, 1);
+INSERT INTO `db_account_privacy` VALUES (6, 1, 1, 1, 1, 1);
+INSERT INTO `db_account_privacy` VALUES (7, 1, 1, 1, 1, 1);
+INSERT INTO `db_account_privacy` VALUES (8, 1, 1, 1, 1, 1);
 
 -- ----------------------------
 -- Table structure for db_image_store
@@ -109,11 +121,12 @@ CREATE TABLE `db_notification`  (
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of db_notification
 -- ----------------------------
+INSERT INTO `db_notification` VALUES (3, 3, '您有新的帖子评论回复', 'SuberuLine 回复了你发表的评论，快去看看吧！', 'success', '/index/topic-detail/29', NULL);
 
 -- ----------------------------
 -- Table structure for db_topic
@@ -128,7 +141,7 @@ CREATE TABLE `db_topic`  (
   `time` datetime NULL DEFAULT NULL,
   `top` tinyint NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of db_topic
@@ -148,6 +161,7 @@ INSERT INTO `db_topic` VALUES (26, 'jsssj', '{\"ops\":[{\"insert\":\"qwe\\n\"}]}
 INSERT INTO `db_topic` VALUES (27, 'rr', '{\"ops\":[{\"insert\":\"rr\\n\"}]}', 1, 4, '2024-05-03 16:56:28', 0);
 INSERT INTO `db_topic` VALUES (28, 'qwe', '{\"ops\":[{\"insert\":\"1wwdiqowjdoq\"},{\"insert\":{\"image\":\"http://localhost:8081/image/cache/20240503/37832dd9126c43a1953ba62a3eae4ccd\"}},{\"insert\":{\"image\":\"http://localhost:8081/image/cache/20240503/12c6b3f54aa243d8b08bda224ed77bc9\"}},{\"insert\":\"\\n\"}]}', 1, 1, '2024-05-03 22:23:55', 0);
 INSERT INTO `db_topic` VALUES (29, '不许玩原神', '{\"ops\":[{\"insert\":\"呵呵额\\nsb\\n\"}]}', 1, 1, '2024-05-04 17:42:06', 0);
+INSERT INTO `db_topic` VALUES (30, 'github好玩吗', '{\"ops\":[{\"insert\":\"一般吧\\n\"}]}', 7, 3, '2024-05-19 01:23:27', 0);
 
 -- ----------------------------
 -- Table structure for db_topic_comment
@@ -161,7 +175,7 @@ CREATE TABLE `db_topic_comment`  (
   `time` datetime NULL DEFAULT NULL,
   `quote` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of db_topic_comment
@@ -179,6 +193,7 @@ INSERT INTO `db_topic_comment` VALUES (14, 1, 29, '{\"ops\":[{\"insert\":\"99jj\
 INSERT INTO `db_topic_comment` VALUES (16, 1, 29, '{\"ops\":[{\"insert\":\"retard\\n\"}]}', '2024-05-14 11:44:05', '14');
 INSERT INTO `db_topic_comment` VALUES (17, 3, 29, '{\"ops\":[{\"insert\":\"啊？\\n\"}]}', '2024-05-16 11:16:55', '14');
 INSERT INTO `db_topic_comment` VALUES (18, 3, 28, '{\"ops\":[{\"insert\":\"牛的\\n\"}]}', '2024-05-16 11:58:08', '-1');
+INSERT INTO `db_topic_comment` VALUES (19, 7, 29, '{\"ops\":[{\"insert\":\"真没素质吧\\n\"}]}', '2024-05-18 22:04:41', '17');
 
 -- ----------------------------
 -- Table structure for db_topic_interact_collect
@@ -212,6 +227,8 @@ CREATE TABLE `db_topic_interact_like`  (
 -- Records of db_topic_interact_like
 -- ----------------------------
 INSERT INTO `db_topic_interact_like` VALUES (16, 1, '2023-10-23 21:19:10');
+INSERT INTO `db_topic_interact_like` VALUES (29, 1, '2024-05-18 22:07:00');
+INSERT INTO `db_topic_interact_like` VALUES (29, 7, '2024-05-18 22:08:05');
 
 -- ----------------------------
 -- Table structure for db_topic_type
