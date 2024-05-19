@@ -9,6 +9,8 @@ import com.zoi.entity.vo.request.EmailResetVO;
 import com.zoi.entity.vo.request.ModifyEmailVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Map;
+
 public interface AccountService extends IService<Account>, UserDetailsService {
 
     /**
@@ -54,4 +56,7 @@ public interface AccountService extends IService<Account>, UserDetailsService {
 
     String changePassword(int id, ChangePasswordVO vo);
 
+    Account oAuthLoginGithub(Map<String, Object> userInfo);
+
+    Account findAccountByGithubId(int id);
 }

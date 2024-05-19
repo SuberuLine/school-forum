@@ -21,4 +21,5 @@ public class Account implements BaseData {
     String role;
     String avatar;
     Date registerTime;
+    Integer github_id;
 }

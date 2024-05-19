@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class DetailsSaveVO {
     @Pattern(regexp = "^[a-zA-Z0-9\\u4e00-\\u9fa5]+$")
-    @Length(min = 3, max = 10)
+    @Length(min = 3, max = 16)
     String username;
 
     @Min(0)

@@ -14,7 +14,6 @@ import com.zoi.utils.Const;
 import com.zoi.utils.FlowLimitUtils;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -106,7 +105,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (this.existAccountByEmail(email)) return "此电子邮件已被其他用户注册";
         if (this.existAccountByUsername(username)) return "此用户名已被占用";
         String password = passwordEncoder.encode(vo.getPassword());
-        Account account = new Account(null, username, password, email, Const.ROLE_DEFAULT,null, new Date());
+        Account account = new Account(null, username, password, email, Const.ROLE_DEFAULT,null, new Date(), null);
         if (this.save(account)) {
             this.deleteEmailVerifyCode(email);
             accountPrivacyMapper.insert(new AccountPrivacy(account.getId()));
@@ -144,6 +143,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Override
     public Account findAccountById(int id) {
         return this.query().eq("id", id).one();
+    }
+
+    @Override
+    public Account findAccountByGithubId(int id) {
+        return this.query().eq("github_id", id).one();
     }
 
     @Override
@@ -222,5 +226,35 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 .set("password", passwordEncoder.encode(vo.getNew_password()))
                 .update();
         return success ? null : "未知错误，请联系管理员";
+    }
+
+    @Override
+    public Account oAuthLoginGithub(Map<String, Object> userInfo) {
+        Integer githubId = (Integer) userInfo.get("id");
+        if (this.findAccountByGithubId(githubId) == null) {
+            return this.createUserByUsername(userInfo);
+        }
+        return null;
+    }
+
+    private Account createUserByUsername(Map<String, Object> userInfo) {
+        String defaultPassword = passwordEncoder.encode("defaultPassword");
+        Account account = new Account(null,
+                (String) userInfo.get("login"),
+                defaultPassword,
+                null,
+                Const.ROLE_DEFAULT,
+                (String) userInfo.get("avatar_url"),
+                new Date(),
+                (Integer) userInfo.get("id"));
+        if (this.save(account)) {
+            accountPrivacyMapper.insert(new AccountPrivacy(account.getId()));
+            AccountDetails details = new AccountDetails();
+            details.setId(account.getId());
+            accountDetailsMapper.insert(details);
+            return account;
+        } else {
+            return null;
+        }
     }
 }
