@@ -231,10 +231,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Override
     public Account oAuthLoginGithub(Map<String, Object> userInfo) {
         Integer githubId = (Integer) userInfo.get("id");
-        if (this.findAccountByGithubId(githubId) == null) {
+        Account account = findAccountByGithubId(githubId);
+        if (account == null) {
             return this.createUserByUsername(userInfo);
         }
-        return null;
+        return account;
     }
 
     private Account createUserByUsername(Map<String, Object> userInfo) {

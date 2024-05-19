@@ -6,13 +6,12 @@ import com.zoi.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +32,7 @@ public class OAuthController {
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
     String clientSecret;
 
     @Value("${spring.security.oauth2.client.provider.github.user-info-uri}")
@@ -73,12 +72,17 @@ public class OAuthController {
     }
 
     private String getAccessToken(String code) {
-        String uri = tokenUri +
-                "client_id=" + clientId +
-                "&client_secret=" + clientSecret +
-                "&code=" + code;
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("code", code);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(uri, null, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, requestEntity, String.class);
+
+        // 获取access_token字符串
         return Objects.requireNonNull(response.getBody()).split("&")[0].split("=")[1];
     }
 
