@@ -1,0 +1,46 @@
+spring:
+  web:
+    flow:
+      limit: 500
+      period: 1
+      block: 30
+    front: ${FRONT_ENDPOINT:http://localhost:5173}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  mail:
+    host: ${MAIL_HOST:smtp.163.com}
+    username: ${MAIL_USERNAME:user}
+    password: ${MAIL_PASSWORD:password}
+  rabbitmq:
+    addresses: ${RABBITMQ_ENDPOINT:localhost}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: /
+  application:
+    name: Forum-backend
+  security:
+    jwt:
+      key: ${JWT_KEY:abcdefghijk}
+      expire: 7
+  datasource:
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_URL:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:forum}?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+  data:
+    redis:
+      host: ${REDIS_ENDPOINT:localhost}
+      password: ${REDIS_PASSWORD}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:localhost}
+    user: ${MINIO_ACCESS_TOKEN:minioadmin}
+    password: ${MINIO_SECRET:minioadmin}
+  weather:
+    key: ${HF_WEATHER_KEY:114514}
+server:
+  port: ${PORT:8081}
+springdoc:
+  paths-to-match: /api/**
+  swagger-ui:
+    operations-sorter: alpha

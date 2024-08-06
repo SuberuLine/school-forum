@@ -1,0 +1,61 @@
+spring:
+  web:
+    flow:
+      limit: 500
+      period: 1
+      block: 30
+    front: http://localhost:5173
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  mail:
+    host:
+    username:
+    password:
+  rabbitmq:
+    addresses: localhost
+    username: guest
+    password: guest
+    virtual-host: /
+  application:
+    name: Forum-backend
+  security:
+    jwt:
+      key: abcdefghijk
+      expire: 7
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id:
+            client-secret:
+            redirect-uri: http://localhost:8081/oauth/redirect
+            scope:
+              - read:user
+              - user:email
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/forum?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+  data:
+    redis:
+      host: localhost
+  minio:
+    endpoint: http://localhost:9000
+    user: minioadmin
+    password: minioadmin
+  weather:
+    key: # 和风天气API key
+server:
+  port: 8081
+springdoc:
+  paths-to-match: /api/**
+  swagger-ui:
+    operations-sorter: alpha
